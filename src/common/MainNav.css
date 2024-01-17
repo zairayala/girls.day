@@ -1,0 +1,24 @@
+#main-nav{
+    background-color: var(--color);
+}
+
+.nav-link{
+    font-size: 20px!important;
+    padding: .5rem 2rem!important;
+}
+
+#main-nav .navbar .container img{
+    width: 120px;
+}
+
+#main-nav .navbar{
+    padding: 1.5rem 0rem;
+}
+#main-nav .navbar .navbar-nav{
+    display: flex;
+    align-items: center;
+}
+
+.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl{
+    padding: 0rem;
+}
