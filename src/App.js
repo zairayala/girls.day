@@ -5,16 +5,18 @@ import Home from './home/Home';
 import React, { Component, useEffect } from 'react';
 import Login from './Login';
 import Register from './Register';
-import { auth } from './firebase-config';
+import { auth, db } from './firebase-config';
 import { getApp } from 'firebase/app';
+import { doc, getDoc } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 
 function App() {
-  const [usuario, setUsuario] = React.useState(null);
+  const [user, setUser] = React.useState(null);
 
   useEffect(() => {
       auth.onAuthStateChanged((fbUser) => {
-          setUsuario(fbUser);
+        setUser(fbUser);
       })
 
   }, [])

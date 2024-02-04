@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from "./firebase-config";
+import { auth, db } from "./firebase-config";
 import "./Register.css";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from 'firebase/firestore';
 
 const Register = () => {
-
+  const [registerNames, setRegisterNames] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [error, setError] = useState('');
@@ -44,6 +45,7 @@ const Register = () => {
       );
       if (userCredential && userCredential.user) {
         const { uid } = userCredential.user;
+        await saveUserData(uid);
         navigate("/");
       }
     } catch (error) {
@@ -51,11 +53,32 @@ const Register = () => {
     }
 
   };
+
+  const saveUserData = async (uid) => {
+    const userData = {
+        name: registerNames,
+        email: registerEmail,
+        uid: uid
+    };
+    console.log(userData);
+    await setDoc(doc(db, "users", uid), userData);
+}
+
   return (
     <section id='register'>
       <div className='container'>
         <div className='form-box'>
           {error && <p className="text-danger">{error}</p>}
+          <div className='inputBox'>
+            <input
+              type="email"
+              value={registerNames}
+              onChange={(event) => {
+                setRegisterNames(event.target.value);
+              }}
+            /><span>Nombres</span>
+
+          </div>
           <div className='inputBox'>
             <input
               type="email"

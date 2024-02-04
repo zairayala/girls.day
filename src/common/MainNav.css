@@ -5,10 +5,11 @@
 .nav-link{
     font-size: 20px!important;
     padding: .5rem 2rem!important;
+    text-transform: uppercase;
 }
 
 #main-nav .navbar .container img{
-    width: 120px;
+    width: 250px;
 }
 
 #main-nav .navbar{

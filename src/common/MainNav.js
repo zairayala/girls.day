@@ -4,6 +4,23 @@ import './MainNav.css';
 import logo from '../assets/logo.png'
 
 export default function MainNav() {
+  const displayLoginAndRegister = () => {
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const box = document.getElementById('box');
+
+    signUpButton.addEventListener('click', () => {
+        box.classList.add("right-panel-active");
+    });
+
+    signInButton.addEventListener('click', () => {
+        box.classList.remove("right-panel-active");
+    });
+
+}
+useEffect(() => {
+    displayLoginAndRegister();
+}, [])
 
   return (
     <section id='main-nav'>

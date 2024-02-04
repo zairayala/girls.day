@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import "./Login.css";
-import { auth } from "./firebase-config";
+import { auth, db } from "./firebase-config";
 import { useNavigate } from 'react-router-dom';
+import logo from "./assets/logo2.png"
+import { doc, setDoc } from 'firebase/firestore';
 
 const Login = () => {
 
     const [loginEmail, setLoginEmail] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
+
+    const [registerNames, setRegisterNames] = useState("");
+    const [registerEmail, setRegisterEmail] = useState("");
+    const [registerPassword, setRegisterPassword] = useState("");
+
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -62,8 +69,37 @@ const Login = () => {
         }
     };
 
+    const register = async () => {
+        setError('');
+        try {
+          const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            registerEmail,
+            registerPassword
+          );
+          if (userCredential && userCredential.user) {
+            const { uid } = userCredential.user;
+            await saveUserData(uid);
+            navigate("/");
+          }
+        } catch (error) {
+            alert(error.message)
+        }
+    
+      };
+    
+    const saveUserData = async (uid) => {
+        const userData = {
+            name: registerNames,
+            email: registerEmail,
+            myMeetings: [],
+            meetings: [],
+            uid: uid
+        };
+        await setDoc(doc(db, "users", uid), userData);
+    }
 
-    useEffect(() => {
+    const displayLoginAndRegister = () => {
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
         const box = document.getElementById('box');
@@ -75,51 +111,101 @@ const Login = () => {
         signInButton.addEventListener('click', () => {
             box.classList.remove("right-panel-active");
         });
+
+    }
+
+    useEffect(() => {
+        displayLoginAndRegister();
     }, [])
+
     return (
         <section id='login'>
 
             <div className="box" id="box">
                 <div className="form-container sign-up-container">
-                    <form action="#">
-                        <h2>Create Account</h2>
+                    <div className='form-box' action="#">
+                        <p>Crear cuenta</p>
+                        <input type="text"
+                            placeholder="Nombres"
+                            value={registerNames}
+                            onChange={(event) => {
+                                setRegisterNames(event.target.value);
+                            }}
+                        />
+                        <input type="email"
+                            placeholder="Email"
+                            value={registerEmail}
+                            onChange={(event) => {
+                                setRegisterEmail(event.target.value);
+                            }}
+                        />
+                        <input type="password" 
+                        placeholder="Password" 
+                        value={registerPassword}
+                        onChange={(event) => {
+                          setRegisterPassword(event.target.value);
+                        }}
+          
+                        />
                         <div className="social-container">
-                            <a href="#" className="social"><i className="fab fa-facebook-f"></i></a>
-                            <a href="#" className="social"><i className="fab fa-google-plus-g"></i></a>
-                            <a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
+                            o
+                            <div className="social-icons">
+                                <a href="#" className="social"><i className="fab fa-facebook-f"></i></a>
+                                <a href="#" className="social"><i className="fab fa-google-plus-g"></i></a>
+                                <a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
+
+                            </div>
                         </div>
-                        <span>or use your email for registration</span>
-                        <input type="text" placeholder="Name" />
-                        <input type="email" placeholder="Email" />
-                        <input type="password" placeholder="Password" />
-                        <button>Sign Up</button>
-                    </form>
+
+                        <button onClick={register} type='submit'>Registrar</button>
+                    </div>
                 </div>
                 <div className="form-container sign-in-container">
-                    <form action="#">
-                        <h2>Iniciar sesión</h2>
+                    <div className='form-box' action="#">
+                        <p style={{ marginBottom: "1rem" }}>Iniciar sesión</p>
+                        <input type="email"
+                            placeholder="Email"
+                            value={loginEmail}
+                            onChange={(event) => {
+                                setLoginEmail(event.target.value);
+                            }}
+                        />
+                        <input type="password" placeholder="Password"
+                            value={loginPassword}
+                            onChange={(event) => {
+                                setLoginPassword(event.target.value);
+                            }}
+                        />
                         <div className="social-container">
-                            <a href="#" className="social"><i className="fab fa-facebook-f"></i></a>
-                            <a href="#" className="social"><i className="fab fa-google-plus-g"></i></a>
-                            <a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
+                            o
+                            <div className='social-icons'>
+                                <a href="#" className="social"><i className="fab fa-facebook-f"></i></a>
+                                <a href="#" className="social"><i className="fab fa-google-plus-g"></i></a>
+                                <a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
+
+                            </div>
                         </div>
-                        <span>o usa tu correo electrónico</span>
-                        <input type="email" placeholder="Email" />
-                        <input type="password" placeholder="Password" />
-                        <a href="#">¿Olvidaste tu contraseña?</a>
-                        <button>Ingresar</button>
-                    </form>
+
+                        <a href="#" style={{ margin: ".5rem 0rem" }}>¿Olvidaste tu contraseña?</a>
+                        <button className='button2' style={{ marginTop: "1rem" }} onClick={login} type='submit'>Ingresar</button>
+                    </div>
                 </div>
                 <div className="overlay-container">
                     <div className="overlay">
                         <div className="overlay-panel overlay-left">
-                            <h2>¿Ya tienes una cuenta?</h2>
+                            <p>¿Ya tienes una cuenta?</p>
                             <button className="ghost" id="signIn">Iniciar sesión</button>
                         </div>
                         <div className="overlay-panel overlay-right">
-                            <p>Registrate</p>
-                            <h2>Hagamos de cada salida una experiencia inolvidable</h2>
-                            <button className="button2" id="signUp">CREAR CUENTA</button>
+                            <div style={{ width: "30%" }} className='d-flex align-self-end'>
+                                <img src={logo} alt="" className='img-fluid' />
+                            </div>
+                            <div>
+                                <p style={{ marginBottom: "0rem" }}>Registrar</p>
+                                <h2 style={{ marginBottom: "2rem", marginTop: "2rem", fontSize: "50px" }}>Tu próxima aventura esta por comenzar</h2>
+                                <button className="button2" id="signUp">CREAR CUENTA</button>
+
+                            </div>
                         </div>
                     </div>
                 </div>
