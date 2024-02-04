@@ -193,7 +193,6 @@ input {
 	color: var(--color1);
 }
 
-.overlay-right .button2 {}
 
 .box.right-panel-active .overlay-right {
 	transform: translateX(20%);

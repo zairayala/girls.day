@@ -28,8 +28,8 @@ function App() {
         <main id="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login action="login"/>} />
+            <Route path="/register" element={<Login action="register"/>} />
           </Routes>
         </main >
 

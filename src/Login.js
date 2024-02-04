@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from "./assets/logo2.png"
 import { doc, setDoc } from 'firebase/firestore';
 
-const Login = () => {
+const Login = (action) => {
 
     const [loginEmail, setLoginEmail] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
@@ -72,22 +72,22 @@ const Login = () => {
     const register = async () => {
         setError('');
         try {
-          const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            registerEmail,
-            registerPassword
-          );
-          if (userCredential && userCredential.user) {
-            const { uid } = userCredential.user;
-            await saveUserData(uid);
-            navigate("/");
-          }
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                registerEmail,
+                registerPassword
+            );
+            if (userCredential && userCredential.user) {
+                const { uid } = userCredential.user;
+                await saveUserData(uid);
+                navigate("/");
+            }
         } catch (error) {
             alert(error.message)
         }
-    
-      };
-    
+
+    };
+
     const saveUserData = async (uid) => {
         const userData = {
             name: registerNames,
@@ -99,10 +99,15 @@ const Login = () => {
         await setDoc(doc(db, "users", uid), userData);
     }
 
-    const displayLoginAndRegister = () => {
+    const displayLoginAndRegister = (action) => {
         const signUpButton = document.getElementById('signUp');
         const signInButton = document.getElementById('signIn');
         const box = document.getElementById('box');
+
+
+        if (action.action === "register") {
+            box.classList.add("right-panel-active");
+        }
 
         signUpButton.addEventListener('click', () => {
             box.classList.add("right-panel-active");
@@ -113,10 +118,9 @@ const Login = () => {
         });
 
     }
-
     useEffect(() => {
-        displayLoginAndRegister();
-    }, [])
+        displayLoginAndRegister(action);
+    }, [action])
 
     return (
         <section id='login'>
@@ -139,13 +143,13 @@ const Login = () => {
                                 setRegisterEmail(event.target.value);
                             }}
                         />
-                        <input type="password" 
-                        placeholder="Password" 
-                        value={registerPassword}
-                        onChange={(event) => {
-                          setRegisterPassword(event.target.value);
-                        }}
-          
+                        <input type="password"
+                            placeholder="Password"
+                            value={registerPassword}
+                            onChange={(event) => {
+                                setRegisterPassword(event.target.value);
+                            }}
+
                         />
                         <div className="social-container">
                             o
